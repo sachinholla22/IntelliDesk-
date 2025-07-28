@@ -1,4 +1,4 @@
-package com.ticketsystem.ticketsystem.entity;
+package com.ticketsystem.ticketsystem.enums;
 
 public enum Role{
     CLIENT,DEVELOPER,MANAGER
