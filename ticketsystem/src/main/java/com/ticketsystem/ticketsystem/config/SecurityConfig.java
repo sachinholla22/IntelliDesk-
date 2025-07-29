@@ -10,18 +10,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.ticketsystem.ticketsystem.utils.JwtFilter;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
 
     private final JwtFilter filter;
 
+    public SecurityConfig(JwtFilter filter){
+        this.filter=filter;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf->csrf.disable())
             .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(req->req.anyRequest().authenticated())
-            .addFilterBefore(filter, new UsernamePasswordAuthenticationFilter());
+            .authorizeHttpRequests(req->req.requestMatchers("/api/auth/login","/api/auth/register").permitAll().anyRequest().authenticated())
+            .addFilterBefore(filter,UsernamePasswordAuthenticationFilter.class);
 
         return http.build();    
     }
