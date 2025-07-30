@@ -2,13 +2,14 @@ package com.ticketsystem.ticketsystem.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ticketsystem.ticketsystem.dto.ApiResponse;
+import com.ticketsystem.ticketsystem.dto.ApiWrapper;
 import com.ticketsystem.ticketsystem.entity.Users;
 import com.ticketsystem.ticketsystem.service.AuthService;
 
@@ -26,15 +27,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> registerUserController(@Valid @RequestBody Users request){
+    public ResponseEntity<ApiWrapper<?>> registerUserController(@Valid @RequestBody Users request){
        
-      ApiResponse response=service.registerUserService(request);
-      return new ResponseEntity<>(response,HttpStatus.CREATED);
+      String  response=service.registerUserService(request);
+      return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.CREATED));
     }
 
-    @GetMapping("/hello")
+    @PreAuthorize("hasRole('CLIENT')")
+    @GetMapping("/test")
     public String greet(){
-      return "Hello";
+      return "welcome";
     }
 
 }

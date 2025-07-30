@@ -1,6 +1,7 @@
 package com.ticketsystem.ticketsystem.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,7 +33,7 @@ public class Ticket {
 
     private LocalDate createdAt;
 
-    private String photoPath; // Path or URL to the uploaded photo (optional)
+    private List<String> photoPath; // Path or URL to the uploaded photo (optional)
 
 
 }
