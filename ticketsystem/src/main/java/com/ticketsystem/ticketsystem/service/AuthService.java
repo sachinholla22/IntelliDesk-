@@ -3,7 +3,7 @@ package com.ticketsystem.ticketsystem.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ticketsystem.ticketsystem.dto.ApiResponse;
+
 import com.ticketsystem.ticketsystem.entity.Users;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 
@@ -17,11 +17,12 @@ public class AuthService {
         this.encoder=encoder;
     }
 
-    public ApiResponse registerUserService(Users request){
+    public String registerUserService(Users request){
         String hashedPass=encoder.encode(request.getPassword());
         request.setPassword(hashedPass);
         Users savedUser=repo.save(request);
-    return new ApiResponse(true, "User successfully registered", savedUser);
+        return "User SuccessFully Created";
+
     }
 
 
