@@ -1,6 +1,6 @@
 package com.ticketsystem.ticketsystem.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -31,7 +31,7 @@ public class Ticket {
     @ManyToOne
     private Users assignedTo;
 
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     private List<String> photoPath; // Path or URL to the uploaded photo (optional)
 
