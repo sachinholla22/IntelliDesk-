@@ -1,9 +1,10 @@
 package com.ticketsystem.ticketsystem.utils;
 
+import java.io.IOException;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
         token=authHeader.substring(7);
 
         try{
-            email=jwtUtil.extractEmail(token);
+            email=jwtUtil.extractUserId(token);
         }catch(Exception e){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;

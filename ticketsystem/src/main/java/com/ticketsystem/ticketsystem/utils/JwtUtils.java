@@ -25,9 +25,9 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String email,String role){
+    public String generateToken(String userId,String role){
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userId)
                 .claim("role",role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+JWT_EXPIRATION))
@@ -35,7 +35,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String extractEmail(String token){
+    public String extractUserId(String token){
         return extractClaim(token,Claims::getSubject);
     }
 
@@ -43,14 +43,32 @@ public class JwtUtils {
         return extractAllClaims(token).get("role",String.class);
     }
 
-    public boolean validateToken(String token, String userEmail){
+    public boolean validateToken(String token, String userId){
      try{
-        final String email=extractEmail(token);
-        return (email.equals(userEmail) && !isTokenExpired(token));
+        final String email=extractUserId(token);
+        return (email.equals(userId) && !isTokenExpired(token));
      }catch( Exception e){
         return false;
      }
     }
+public boolean isTokenValid(String token, String expectedUserId, String expectedRole) {
+    try {
+        Claims claims = Jwts.parserBuilder()
+                            .setSigningKey(getSignKey())
+                            .build()
+                            .parseClaimsJws(token)
+                            .getBody();
+
+        String tokenUserId = claims.getSubject();  // assuming userId is set as subject
+        String tokenRole = claims.get("role", String.class);
+
+        return tokenUserId.equals(expectedUserId)
+               && tokenRole.equals(expectedRole)
+               && !claims.getExpiration().before(new Date());
+    } catch (Exception e) {
+        return false;
+    }
+}
 
     private boolean isTokenExpired(String token){
         return extractExpiration(token).before(new Date());
