@@ -1,6 +1,7 @@
 package com.ticketsystem.ticketsystem.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,13 +14,16 @@ import com.ticketsystem.ticketsystem.repo.TicketRepository;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 
 @Service
-public class TicketServiceImpl extends TicketService{
+public class TicketServiceImpl implements TicketService{
     
     private final TicketRepository ticketRepo;
     private final UserRepo userRepo;
-    public TicketServiceImpl(TicketRepository ticketRepo,UserRepo userRepo){
+    private final FileStorageService fileStore;
+    
+    public TicketServiceImpl(TicketRepository ticketRepo,UserRepo userRepo,FileStorageService fileStore){
     this.ticketRepo=ticketRepo;
     this.userRepo=userRepo;
+    this.fileStore=fileStore;
     }
 
 
@@ -28,6 +32,16 @@ public class TicketServiceImpl extends TicketService{
         Users user=userRepo.findById(Long.valueOf(userId)).orElseThrow(()->new UsernameNotFoundException("No particular User"));
         ticket.setClient(user);
         ticket.setCreatedAt(LocalDateTime.now());
+
+        List<String>photosUrl=new ArrayList<>();
+        for(MultipartFile photo:photos){
+        String paths=fileStore.storeFiles(photo);
+        photosUrl.add(paths);
+        }
+
+        ticket.setPhotoPath(photosUrl);
+        ticketRepo.save(ticket);
+        return "Ticket Created Successfully";
         
     }
 

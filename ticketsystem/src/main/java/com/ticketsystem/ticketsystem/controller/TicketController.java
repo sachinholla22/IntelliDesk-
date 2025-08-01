@@ -5,9 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -40,9 +38,9 @@ public class TicketController {
         String jwt=authHeader.replace("Bearer ","");
         String userId=jwtUtils.extractUserId(jwt);
         if(!jwtUtils.isTokenValid(jwt, userId, "CLIENT")){
-            throw new IllegalArgumentException("Invalid user or role");
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiWrapper.error(HttpStatus.UNAUTHORIZED,"Not valid user","UnAuthorized"));
         }
-        Ticket response = ticketService. createTicketService(ticket, photos, userId);
+        String response = ticketService. createTicketService(ticket, photos, userId);
         return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.CREATED));
     }
     
