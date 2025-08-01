@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
+import com.ticketsystem.ticketsystem.dto.UserLoginDto;
 import com.ticketsystem.ticketsystem.entity.Users;
 import com.ticketsystem.ticketsystem.service.AuthService;
 
@@ -31,6 +32,11 @@ public class AuthController {
        
       String  response=service.registerUserService(request);
       return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.CREATED));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiWrapper<?>>  loginUserController(@Valid @RequestBody UserLoginDto request){
+      return ResponseEntity.ok(HttpStatus.OK).body(ApiWrapper.success(response,HttpStatus.OK));
     }
 
     @PreAuthorize("hasRole('CLIENT')")
