@@ -1,7 +1,10 @@
 package com.ticketsystem.ticketsystem.entity;
 
+import java.time.LocalDateTime;
+
 import com.ticketsystem.ticketsystem.enums.Role;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 
@@ -28,9 +31,11 @@ public class Users {
     private String name;
     
     @Email(message = "Invalid email")
+    @Column(nullable = false, unique = true)
     private String email;
     private String password;
 
+    private LocalDateTime createdAt;
     @Enumerated(EnumType.STRING)
     private Role role;
     

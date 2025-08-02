@@ -5,9 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginDto {
-    public String email;
-    public String password;
+@AllArgsConstructor
+public class LoginResponse {
+    
+
+    private Long userId;
+    private String jwt;
+    private boolean isCorrectCredentials;
 }

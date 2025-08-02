@@ -1,5 +1,7 @@
 package com.ticketsystem.ticketsystem.controller;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
-import com.ticketsystem.ticketsystem.dto.UserLoginDto;
+import com.ticketsystem.ticketsystem.dto.LoginResponse;
+import com.ticketsystem.ticketsystem.dto.UserLoginRequest;
 import com.ticketsystem.ticketsystem.entity.Users;
 import com.ticketsystem.ticketsystem.service.AuthService;
 
@@ -35,8 +38,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiWrapper<?>>  loginUserController(@Valid @RequestBody UserLoginDto request){
-      return ResponseEntity.ok(HttpStatus.OK).body(ApiWrapper.success(response,HttpStatus.OK));
+    public ResponseEntity<ApiWrapper<?>>  loginUserController(@Valid @RequestBody UserLoginRequest request){
+      if(request==null){
+        throw new IllegalArgumentException("Credentials should not empty");
+      }
+      LoginResponse response=service.loginService(request);
+      return ResponseEntity.status(HttpStatus.OK).body(ApiWrapper.success(response,HttpStatus.OK));
     }
 
     @PreAuthorize("hasRole('CLIENT')")
