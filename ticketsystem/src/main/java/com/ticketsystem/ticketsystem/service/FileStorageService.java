@@ -11,13 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileStorageService {
-     private final String  uploadDir="uploads/";
+     private final Path  uploadDir=Paths.get(System.getProperty("user.dir")).resolve("uploads");
 
     public String storeFiles(MultipartFile file){
 
         try{
-           Files.createDirectories(Paths.get(uploadDir));
-           String fileName=UUID.randomUUID()+"-"+file.getOriginalFilename();
+           Files.createDirectories(uploadDir);
+           String fileName=UUID.randomUUID().toString().substring(0,7)+"-"+file.getOriginalFilename();
            Path filePath=Paths.get(uploadDir+fileName);
            file.transferTo(filePath.toFile());
            return "/uploads/"+fileName;
