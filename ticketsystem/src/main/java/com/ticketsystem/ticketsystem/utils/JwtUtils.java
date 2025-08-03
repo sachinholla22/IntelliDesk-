@@ -25,10 +25,11 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String userId,String role){
+    public String generateToken(String userId,String role,Long organizationId){
         return Jwts.builder()
                 .setSubject(userId)
                 .claim("role",role)
+                .claim("orgId",organizationId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+JWT_EXPIRATION))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
@@ -43,6 +44,10 @@ public class JwtUtils {
         return extractAllClaims(token).get("role",String.class);
     }
 
+    public Long extractOrganizationId(String token){
+        return extractAllClaims(token).get("orgId",Long.class);
+    }
+
     public boolean validateToken(String token, String userId){
      try{
         final String email=extractUserId(token);
@@ -51,7 +56,7 @@ public class JwtUtils {
         return false;
      }
     }
-public boolean isTokenValid(String token, String expectedUserId, String expectedRole) {
+public boolean isTokenValid(String token, String expectedUserId, String expectedRole,Long expectedOrgId) {
     try {
         Claims claims = Jwts.parserBuilder()
                             .setSigningKey(getSignKey())
@@ -61,9 +66,11 @@ public boolean isTokenValid(String token, String expectedUserId, String expected
 
         String tokenUserId = claims.getSubject();  // assuming userId is set as subject
         String tokenRole = claims.get("role", String.class);
+        Long orgId=claims.get("orgId",Long.class);
 
         return tokenUserId.equals(expectedUserId)
                && tokenRole.equals(expectedRole)
+               && orgId.equals(expectedOrgId)
                && !claims.getExpiration().before(new Date());
     } catch (Exception e) {
         return false;

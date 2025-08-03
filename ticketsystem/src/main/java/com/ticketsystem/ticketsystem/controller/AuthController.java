@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
@@ -31,9 +32,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiWrapper<?>> registerUserController(@Valid @RequestBody Users request){
+    public ResponseEntity<ApiWrapper<?>> registerUserController(@RequestParam("org") String orgName,@Valid @RequestBody Users request){
        
-      String  response=service.registerUserService(request);
+      String  response=service.registerUserService(orgName,request);
       return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.CREATED));
     }
 
