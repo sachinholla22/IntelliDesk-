@@ -38,7 +38,8 @@ public class TicketController {
     public ResponseEntity<ApiWrapper<?>> createTicketController( @RequestHeader("Authorization")String authHeader,@Valid @RequestPart("ticket") Ticket ticket, @RequestPart("photo") List <MultipartFile> photos){
         String jwt=authHeader.replace("Bearer ","");
         String userId=jwtUtils.extractUserId(jwt);
-        if(!jwtUtils.isTokenValid(jwt, userId, "CLIENT")){
+        Long orgId=jwtUtils.extractOrganizationId(String.valueOf(ticket.getOrganization().getId()));
+        if(!jwtUtils.isTokenValid(jwt, userId, "CLIENT",orgId)){
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiWrapper.error(HttpStatus.UNAUTHORIZED,"Not valid user","UnAuthorized"));
         }
         String response = ticketService. createTicketService(ticket, photos, userId);

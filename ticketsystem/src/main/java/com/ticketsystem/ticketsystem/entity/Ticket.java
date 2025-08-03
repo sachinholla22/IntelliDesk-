@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.ticketsystem.ticketsystem.enums.Priority;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,6 +40,9 @@ public class Ticket {
     private Users assignedTo;
 
     private LocalDateTime createdAt;
+
+    @Column(name="due_date")
+    private LocalDateTime dueDate;
 
     private List<String> photoPath; // Path or URL to the uploaded photo (optional)
 
