@@ -3,6 +3,7 @@ package com.ticketsystem.ticketsystem.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,7 @@ public class TicketController {
     }
 
     @PreAuthorize("hasRole('CLIENT')")
-    @PostMapping("/createticket")
+    @PostMapping(value="/createticket",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiWrapper<?>> createTicketController( @RequestHeader("Authorization")String authHeader,@Valid @RequestPart("ticket") Ticket ticket, @RequestPart("photo") List <MultipartFile> photos){
         String jwt=authHeader.replace("Bearer ","");
         String userId=jwtUtils.extractUserId(jwt);

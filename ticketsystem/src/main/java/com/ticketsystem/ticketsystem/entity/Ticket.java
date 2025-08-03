@@ -3,10 +3,13 @@ package com.ticketsystem.ticketsystem.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ticketsystem.ticketsystem.enums.Priority;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,11 +23,15 @@ public class Ticket {
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-     private Long id;
-
+    private Long id;
+    
+    @ManyToOne
+    @JoinColumn(name="org_id")
+    private Organization organization;
     private String title;
     private String description;
     private String status; // OPEN, ASSIGNED, RESOLVED
+    private Priority priority;
     @ManyToOne
     private Users client;
 
