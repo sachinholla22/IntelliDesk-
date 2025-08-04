@@ -10,4 +10,5 @@ import com.ticketsystem.ticketsystem.entity.Users;
 @Repository
 public interface UserRepo extends JpaRepository<Users,Long>{
     Optional<Users> findByEmail(String email);
+    Optional<Users> findByOrganizationId(Long orgId);
 }

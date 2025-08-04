@@ -32,6 +32,7 @@ public class TicketServiceImpl implements TicketService{
         Users user=userRepo.findById(Long.valueOf(userId)).orElseThrow(()->new UsernameNotFoundException("No particular User"));
         ticket.setClient(user);
         ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setOrganization(user.getOrganization());
 
         List<String>photosUrl=new ArrayList<>();
         for(MultipartFile photo:photos){
@@ -43,6 +44,11 @@ public class TicketServiceImpl implements TicketService{
         ticketRepo.save(ticket);
         return "Ticket Created Successfully";
         
+    }
+
+    @Override
+    public Ticket getNullOpenTicketService(String status){
+        Optional<Ticket> ticket=ticketRepo.
     }
 
 }

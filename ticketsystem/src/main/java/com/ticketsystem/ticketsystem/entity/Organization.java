@@ -45,7 +45,7 @@ public class Organization {
 
     @Column(name="org_phone")
     @NotBlank
-    private int orgPhone;
+    private Long orgPhone;
 
     @Column(name="industry_type")
     @NotBlank

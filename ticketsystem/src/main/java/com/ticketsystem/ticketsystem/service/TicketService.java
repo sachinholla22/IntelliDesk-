@@ -8,4 +8,5 @@ import com.ticketsystem.ticketsystem.entity.Ticket;
 
 public interface TicketService {
    public String createTicketService(Ticket ticket, List<MultipartFile> photos, String userId);
+   public Ticket getNullOpenTicketService( String status);
 }

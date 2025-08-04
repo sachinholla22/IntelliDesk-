@@ -1,7 +1,6 @@
 package com.ticketsystem.ticketsystem.service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,7 +47,7 @@ public class AuthService {
           if(!encoder.matches(request.getPassword(),user.getPassword())){
             throw new BadCredentialsException("Username and Password dont match");
           }
-            String jwt=jwtUtils.generateToken(String.valueOf(user.getId()), user.getRole().name(),Long.valueOf(user.getOrganization().getId()));
+            String jwt=jwtUtils.generateToken(String.valueOf(user.getId()), user.getRole().name(),user.getOrganization().getId());
             LoginResponse response=new LoginResponse(user.getId(),jwt,true);
             return response;
         
