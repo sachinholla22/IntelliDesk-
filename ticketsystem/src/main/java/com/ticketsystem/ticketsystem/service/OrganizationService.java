@@ -31,6 +31,7 @@ public class OrganizationService {
     
         String pass=encoder.encode(request.getOrgPassword());
         request.setOrgPassword(pass);
+        request.setCreatedAt(LocalDateTime.now());
         orgRepo.save(request);
         Users user=new Users();
         user.setName(request.getOrgName());
