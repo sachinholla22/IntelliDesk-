@@ -15,18 +15,26 @@ public class GlobalExceptionHandler {
    ApiError error=new ApiError(HttpStatus.BAD_REQUEST,"Bad Credentials" , e.getMessage());
    return ResponseEntity.ok(error);
     }
-
+     
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiError> handleResourceNotFoundException(ResourceNotFoundException e){
+   ApiError error=new ApiError(HttpStatus.NOT_FOUND,"Invalid Resouce" , e.getMessage());
+   return ResponseEntity.ok(error);
+    }
+  
 
     @ExceptionHandler(InvalidResourceException.class)
     public ResponseEntity<ApiError> handleInvalidResouceError(InvalidResourceException e){
    ApiError error=new ApiError(HttpStatus.NOT_FOUND,"Invalid Resouce" , e.getMessage());
    return ResponseEntity.ok(error);
     }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGlobalException(Exception e){
            ApiError error=new ApiError(HttpStatus.INTERNAL_SERVER_ERROR,"Internal Server Error!" , e.getMessage());
            return ResponseEntity.ok(error);
 
     }
+    
 
 }

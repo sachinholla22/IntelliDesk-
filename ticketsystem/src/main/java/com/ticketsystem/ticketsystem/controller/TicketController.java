@@ -1,6 +1,7 @@
 package com.ticketsystem.ticketsystem.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ticketsystem.ticketsystem.dto.ApiError;
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
+import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
@@ -56,7 +59,12 @@ public class TicketController {
 
     @GetMapping("/getTickets")
     public ResponseEntity<ApiWrapper<?>> getNullOpenTicketsController(@RequestParam("status") String status){
-        Ticket ticket=ticketService.getNullOpenTicketService(status);
+        Optional<List<TicketResponseDTO>> ticket=ticketService.getNullOpenTicketService(status);
+        if(ticket.isPresent()){
+            return ResponseEntity.ok(ApiWrapper.success(ticket.get(),HttpStatus.OK));
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiWrapper.error(HttpStatus.NOT_FOUND,"No Open Tickets","No Open Tickets"));
+        }
         
 
     }
