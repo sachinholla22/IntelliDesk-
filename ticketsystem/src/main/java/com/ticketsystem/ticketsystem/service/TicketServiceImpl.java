@@ -2,14 +2,19 @@ package com.ticketsystem.ticketsystem.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
+import com.ticketsystem.ticketsystem.exception.ResourceNotFoundException;
 import com.ticketsystem.ticketsystem.repo.TicketRepository;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 
@@ -46,9 +51,51 @@ public class TicketServiceImpl implements TicketService{
         
     }
 
-    @Override
-    public Ticket getNullOpenTicketService(String status){
-        Optional<Ticket> ticket=ticketRepo.
+   @Override
+public Optional<List<TicketResponseDTO>> getNullOpenTicketService(String status) {
+    Optional<List<Ticket>> optionalTickets = ticketRepo.getTicketByAssignToAndStatus(status);
+
+    if (optionalTickets.isEmpty()) {
+        return Optional.of(Collections.emptyList());
     }
 
+    List<Ticket> tickets = optionalTickets.get();
+    List<TicketResponseDTO> responseList = new ArrayList<>();
+
+    for (Ticket ticket : tickets) {
+        TicketResponseDTO resp = new TicketResponseDTO();
+
+        // Set basic fields
+        if (ticket.getOrganization() != null) {
+            resp.setOrganizationName(ticket.getOrganization().getOrgName());
+        } else {
+            resp.setOrganizationName(null);
+        }
+
+        resp.setTitle(ticket.getTitle());
+        resp.setDescription(ticket.getDescription());
+        resp.setStatus(ticket.getStatus());
+        resp.setPriority(ticket.getPriority());
+
+        if (ticket.getClient() != null) {
+            resp.setClientName(ticket.getClient().getName());
+        }
+
+        if (ticket.getAssignedTo() != null) {
+            resp.setAssignedToId(ticket.getAssignedTo());
+        } else {
+            resp.setAssignedToId(null);
+        }
+
+        resp.setCreatedAt(ticket.getCreatedAt());
+        resp.setDueDate(ticket.getDueDate());
+
+        // Directly set the list of photo paths
+        resp.setPhotoPath(ticket.getPhotoPath() != null ? ticket.getPhotoPath() : Collections.emptyList());
+
+        responseList.add(resp);
+    }
+
+    return Optional.of(responseList);
+}
 }

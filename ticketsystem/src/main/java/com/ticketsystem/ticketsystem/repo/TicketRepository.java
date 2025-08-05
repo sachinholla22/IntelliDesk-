@@ -1,5 +1,6 @@
 package com.ticketsystem.ticketsystem.repo;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,6 @@ import com.ticketsystem.ticketsystem.entity.Ticket;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket,Long> {
-    @Query(value="SELECT * FROM ticket WHERE assign_to_id IS NULL AND status=:status",nativeQuery=true)
-    Optional<Ticket> getTicketByAssignToAndStatus(@Param("status" )String status);
+    @Query(value="SELECT * FROM ticket WHERE assigned_to_id IS NULL AND status=:status",nativeQuery=true)
+    Optional<List<Ticket>> getTicketByAssignToAndStatus(@Param("status" )String status);
 }

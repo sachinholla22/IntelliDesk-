@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ticketsystem.ticketsystem.enums.Priority;
+import com.ticketsystem.ticketsystem.enums.TicketStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
