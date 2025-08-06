@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ticketsystem.ticketsystem.dto.ApiError;
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
@@ -65,7 +64,21 @@ public class TicketController {
         }else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiWrapper.error(HttpStatus.NOT_FOUND,"No Open Tickets","No Open Tickets"));
         }
-        
 
+    }
+
+    @PostMapping("/assign")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<ApiWrapper<?>> assignTicketController(@RequestHeader("Authorization")String authHeader ,@RequestParam("id")Long id){
+      String jwt=authHeader.replace("Bearer","");
+      String userId=jwtUtils.extractUserId(jwt);
+      Users getOrgId=userRepo.findById(Long.valueOf(userId)).orElseThrow(()->new IllegalArgumentException("No such Users"));
+      Long orgId=getOrgId.getOrganization().getId();
+      if(!jwtUtils.isTokenValid(jwt, userId, "MANAGER",orgId )){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiWrapper.error(HttpStatus.UNAUTHORIZED,"Not valid user","UnAuthorized"));
+      }
+      String response=ticketService.assignTicketService(id);
+      return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.OK));
+   
     }
 }
