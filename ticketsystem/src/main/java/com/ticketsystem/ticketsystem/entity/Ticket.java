@@ -40,6 +40,10 @@ public class Ticket {
     @ManyToOne
     private Users assignedTo;
 
+    @ManyToOne
+    @JoinColumn(name="assigned_by")
+    private Users assignedBy;
+
     private LocalDateTime createdAt;
 
     @Column(name="due_date")

@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
+import com.ticketsystem.ticketsystem.dto.AssignTicketRequest;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 import com.ticketsystem.ticketsystem.service.TicketService;
+import com.ticketsystem.ticketsystem.service.UserService;
 import com.ticketsystem.ticketsystem.utils.JwtUtils;
 
 import jakarta.validation.Valid;
@@ -33,10 +37,14 @@ public class TicketController {
     
     private JwtUtils jwtUtils;
     private TicketService ticketService;
+    private UserService userService;
     private UserRepo userRepo;
-    public TicketController(JwtUtils jwtUtils, TicketService ticketService, UserRepo userRepo){
+
+
+    public TicketController(JwtUtils jwtUtils, TicketService ticketService, UserService userService,UserRepo userRepo){
         this.jwtUtils=jwtUtils;
         this.ticketService=ticketService;
+        this.userService=userService;
         this.userRepo=userRepo;
     }
 
@@ -67,9 +75,10 @@ public class TicketController {
 
     }
 
-    @PostMapping("/assign")
+
+    @PostMapping("/{ticketId}/assign")
     @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<ApiWrapper<?>> assignTicketController(@RequestHeader("Authorization")String authHeader ,@RequestParam("id")Long id){
+    public ResponseEntity<ApiWrapper<?>> assignTicketController(@RequestHeader("Authorization")String authHeader ,@PathVariable("ticketId")Long ticketId ,AssignTicketRequest request){
       String jwt=authHeader.replace("Bearer","");
       String userId=jwtUtils.extractUserId(jwt);
       Users getOrgId=userRepo.findById(Long.valueOf(userId)).orElseThrow(()->new IllegalArgumentException("No such Users"));
@@ -77,8 +86,28 @@ public class TicketController {
       if(!jwtUtils.isTokenValid(jwt, userId, "MANAGER",orgId )){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiWrapper.error(HttpStatus.UNAUTHORIZED,"Not valid user","UnAuthorized"));
       }
-      String response=ticketService.assignTicketService(id);
+      Long assignedToId=request.getAssignedToId();
+      String response=ticketService.assignTicketService(ticketId,Long.valueOf(userId),assignedToId);
       return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.OK));
    
+    }
+
+    @GetMapping("/getdevelopers")
+    public ResponseEntity<ApiWrapper<?>> getDeveloperController(@RequestHeader("Authorization") String authHeader,@RequestParam("role") String role){
+        String jwt=authHeader.replace("Bearer","");
+        String userId=jwtUtils.extractUserId(jwt);
+        Users getOrgId=userRepo.findById(Long.valueOf(userId)).orElseThrow(()->new UsernameNotFoundException("No such users"));
+        Long orgId=getOrgId.getOrganization().getId();
+        if(!jwtUtils.isTokenValid( jwt , userId, "MANAGER", orgId)){
+            throw new IllegalArgumentException("InValid User or Organization");
+        }
+
+        Optional<List<Users>> getDevelopers=userService.getDevelopersService(role);
+        if(getDevelopers.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiWrapper.error(HttpStatus.NOT_FOUND,"No Such Developers","NOT FOUND"));
+        }
+
+ return ResponseEntity.status(HttpStatus.OK).body(ApiWrapper.success(getDevelopers,HttpStatus.OK));
+
     }
 }

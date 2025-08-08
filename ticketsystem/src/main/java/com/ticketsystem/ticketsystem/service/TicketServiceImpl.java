@@ -2,7 +2,6 @@ package com.ticketsystem.ticketsystem.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
-import com.ticketsystem.ticketsystem.exception.ResourceNotFoundException;
 import com.ticketsystem.ticketsystem.repo.TicketRepository;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 
@@ -97,5 +95,21 @@ public Optional<List<TicketResponseDTO>> getNullOpenTicketService(String status)
     }
 
     return Optional.of(responseList);
+}
+
+
+public String assignTicketService(Long ticketId, Long assignedToId,Long assignedById){
+Ticket ticket=new Ticket();
+
+Users assignedByUser=userRepo.findById(assignedById).orElseThrow(()-> new UsernameNotFoundException("No such Users"));
+Users assignedToUser=userRepo.findById(assignedToId).orElseThrow(()-> new UsernameNotFoundException("No such Users"));
+
+ticket.setAssignedBy(assignedByUser);
+ticket.setAssignedTo(assignedToUser);
+ticket.setId(ticketId);
+ticketRepo.save(ticket);
+
+return "Ticket Assigned Successfully";
+
 }
 }
