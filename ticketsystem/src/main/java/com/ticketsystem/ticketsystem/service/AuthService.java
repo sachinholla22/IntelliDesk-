@@ -29,8 +29,8 @@ public class AuthService {
 
     }
 
-    public String registerUserService(String orgName,Users request){
-       Organization org=orgRepo.findByOrgName(orgName).orElseThrow(()->new UsernameNotFoundException("No Such Organization"));
+    public String registerUserService(String orgName,Long id,Users request){
+       Organization org=orgRepo.findById(id).orElseThrow(()->new UsernameNotFoundException("No Such Organization"));
         String hashedPass=encoder.encode(request.getPassword());
         request.setPassword(hashedPass);
         request.setCreatedAt(LocalDateTime.now());

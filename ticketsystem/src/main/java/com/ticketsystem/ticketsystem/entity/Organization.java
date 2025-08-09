@@ -30,7 +30,7 @@ public class Organization {
     @NotBlank
     private String orgName;
 
-    @Column(name="org_email")
+    @Column(name="org_email",unique=true)
     @NotBlank
     @Email(message="Please maintain the Email format")
     private String orgEmail;
@@ -54,6 +54,7 @@ public class Organization {
     @Column(name="org_plan")
     @NotBlank
     private OrgPlans orgPlan;
+
 
     @Column(name="created_at")
     private LocalDateTime createdAt;

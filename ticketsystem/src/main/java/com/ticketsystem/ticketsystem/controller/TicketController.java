@@ -36,10 +36,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/ticket")
 public class TicketController {
     
-    private JwtUtils jwtUtils;
-    private TicketService ticketService;
-    private UserService userService;
-    private UserRepo userRepo;
+    private final JwtUtils jwtUtils;
+    private final TicketService ticketService;
+    private final UserService userService;
+    private final UserRepo userRepo;
 
 
     public TicketController(JwtUtils jwtUtils, TicketService ticketService, UserService userService,UserRepo userRepo){

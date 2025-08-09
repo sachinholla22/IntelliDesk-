@@ -1,7 +1,5 @@
 package com.ticketsystem.ticketsystem.controller;
 
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,9 +30,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiWrapper<?>> registerUserController(@RequestParam("org") String orgName,@Valid @RequestBody Users request){
+    public ResponseEntity<ApiWrapper<?>> registerUserController(@RequestParam("orgname") String orgName,@RequestParam("orgid") Long id,@Valid @RequestBody Users request){
        
-      String  response=service.registerUserService(orgName,request);
+      String  response=service.registerUserService(orgName,id,request);
       return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.CREATED));
     }
 
