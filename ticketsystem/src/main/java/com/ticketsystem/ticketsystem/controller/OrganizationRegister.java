@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
+import com.ticketsystem.ticketsystem.dto.OrganizationResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Organization;
 import com.ticketsystem.ticketsystem.service.OrganizationService;
 
@@ -26,7 +27,7 @@ public class OrganizationRegister {
     @PostMapping("/create-organization")
     public ResponseEntity<ApiWrapper<?>> createOrganizationController(@Valid @RequestBody Organization request){
         
-        String response=orgService.organizationResgisterService(request);
+        OrganizationResponseDTO response=orgService.organizationResgisterService(request);
         return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.CREATED));
     }
 
