@@ -1,6 +1,7 @@
 package com.ticketsystem.ticketsystem.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
-import com.ticketsystem.ticketsystem.dto.AssignTicketRequest;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
@@ -78,7 +79,7 @@ public class TicketController {
 
     @PostMapping("/{ticketId}/assign")
     @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<ApiWrapper<?>> assignTicketController(@RequestHeader("Authorization")String authHeader ,@PathVariable("ticketId")Long ticketId ,AssignTicketRequest request){
+    public ResponseEntity<ApiWrapper<?>> assignTicketController(@RequestHeader("Authorization")String authHeader ,@PathVariable("ticketId")Long ticketId ,@RequestBody Map<String, Object> request){
       String jwt=authHeader.replace("Bearer","");
       String userId=jwtUtils.extractUserId(jwt);
       Users getOrgId=userRepo.findById(Long.valueOf(userId)).orElseThrow(()->new IllegalArgumentException("No such Users"));
@@ -86,7 +87,7 @@ public class TicketController {
       if(!jwtUtils.isTokenValid(jwt, userId, "MANAGER",orgId )){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiWrapper.error(HttpStatus.UNAUTHORIZED,"Not valid user","UnAuthorized"));
       }
-      Long assignedToId=request.getAssignedToId();
+      Long assignedToId=Long.valueOf(request.get("assignedToId").toString());
       String response=ticketService.assignTicketService(ticketId,Long.valueOf(userId),assignedToId);
       return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.OK));
    

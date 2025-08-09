@@ -97,16 +97,17 @@ public Optional<List<TicketResponseDTO>> getNullOpenTicketService(String status)
     return Optional.of(responseList);
 }
 
-
-public String assignTicketService(Long ticketId, Long assignedToId,Long assignedById){
-Ticket ticket=new Ticket();
+@Override
+public String assignTicketService(Long ticketId, Long assignedById,Long assignedToId){
+  // Get existing ticket
+    Ticket ticket = ticketRepo.findById(ticketId)
+        .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
 
 Users assignedByUser=userRepo.findById(assignedById).orElseThrow(()-> new UsernameNotFoundException("No such Users"));
 Users assignedToUser=userRepo.findById(assignedToId).orElseThrow(()-> new UsernameNotFoundException("No such Users"));
 
 ticket.setAssignedBy(assignedByUser);
 ticket.setAssignedTo(assignedToUser);
-ticket.setId(ticketId);
 ticketRepo.save(ticket);
 
 return "Ticket Assigned Successfully";
