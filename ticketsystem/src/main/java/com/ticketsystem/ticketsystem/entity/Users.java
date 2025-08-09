@@ -7,7 +7,6 @@ import com.ticketsystem.ticketsystem.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
-
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,10 +39,14 @@ public class Users {
     @Email(message = "Invalid email")
     @Column(nullable = false, unique = true)
     private String email;
+    
+    @NotNull
     private String password;
 
     private LocalDateTime createdAt;
     @Enumerated(EnumType.STRING)
+
+    @NotNull
     private Role role;
     
 

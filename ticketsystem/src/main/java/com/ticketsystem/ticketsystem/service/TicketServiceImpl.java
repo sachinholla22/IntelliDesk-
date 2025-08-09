@@ -108,6 +108,8 @@ Users assignedToUser=userRepo.findById(assignedToId).orElseThrow(()-> new Userna
 
 ticket.setAssignedBy(assignedByUser);
 ticket.setAssignedTo(assignedToUser);
+
+ticket.setStatus("ASSIGNED");
 ticketRepo.save(ticket);
 
 return "Ticket Assigned Successfully";
