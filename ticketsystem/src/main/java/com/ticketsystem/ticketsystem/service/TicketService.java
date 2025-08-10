@@ -12,4 +12,5 @@ public interface TicketService {
    public String createTicketService(Ticket ticket, List<MultipartFile> photos, String userId);
    public Optional<List<TicketResponseDTO>> getNullOpenTicketService( String status);
    public String assignTicketService(Long ticketId,Long assignedById,Long assignedToId);
+   public Optional<List<TicketResponseDTO>> getAllTickets();
 }

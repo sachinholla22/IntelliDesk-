@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.ticketsystem.ticketsystem.entity.Users;
 import com.ticketsystem.ticketsystem.enums.Priority;
-import com.ticketsystem.ticketsystem.enums.TicketStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class TicketResponseDTO {
     private String organizationName;
     private String title;
@@ -25,4 +25,5 @@ public class TicketResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime dueDate;
     private List<String> photoPath;
+    private Users assignedById;
 }

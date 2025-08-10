@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -114,5 +115,32 @@ ticketRepo.save(ticket);
 
 return "Ticket Assigned Successfully";
 
+}
+
+@Override
+public Optional<List<TicketResponseDTO>> getAllTickets(){
+    List<Ticket> tickets = ticketRepo.findAll();
+
+    if (tickets.isEmpty()) {
+        return Optional.empty();
+    }
+
+    List<TicketResponseDTO> dtoList = tickets.stream()
+        .map(ticket -> new TicketResponseDTO(
+            ticket.getOrganization().getOrgName(),
+            ticket.getTitle(),
+            ticket.getDescription(),
+            ticket.getStatus(),
+            ticket.getPriority(),
+            ticket.getClient().getName(),
+            ticket.getAssignedTo(),
+            ticket.getCreatedAt(),
+            ticket.getDueDate(),
+            ticket.getPhotoPath(),
+            ticket.getAssignedBy()
+        ))
+        .collect(Collectors.toList());
+
+    return Optional.of(dtoList);
 }
 }
