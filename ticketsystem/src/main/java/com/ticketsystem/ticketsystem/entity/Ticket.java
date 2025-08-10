@@ -6,8 +6,11 @@ import java.util.List;
 import com.ticketsystem.ticketsystem.enums.Priority;
 import com.ticketsystem.ticketsystem.enums.TicketStatus;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,10 +33,18 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name="org_id")
     private Organization organization;
+
+    @Column(nullable=false)
     private String title;
+
     private String description;
+
+    @Column(nullable=false)
     private String status; // OPEN, ASSIGNED, RESOLVED
+    
+    @Enumerated(EnumType.STRING)
     private Priority priority;
+    
     @ManyToOne
     private Users client;
 

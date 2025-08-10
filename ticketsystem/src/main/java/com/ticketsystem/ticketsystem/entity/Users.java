@@ -44,8 +44,8 @@ public class Users {
     private String password;
 
     private LocalDateTime createdAt;
+    
     @Enumerated(EnumType.STRING)
-
     @NotNull
     private Role role;
     
