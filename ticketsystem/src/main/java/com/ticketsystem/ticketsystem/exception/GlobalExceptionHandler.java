@@ -29,6 +29,11 @@ public class GlobalExceptionHandler {
    return ResponseEntity.ok(error);
     }
 
+    @ExceptionHandler(TicketNotFoundException.class)
+    public ResponseEntity<ApiError> handleInvalidTicketError(TicketNotFoundException e){
+   ApiError error=new ApiError(HttpStatus.NOT_FOUND,"No such Ticket" , e.getMessage());
+   return ResponseEntity.ok(error);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGlobalException(Exception e){
            ApiError error=new ApiError(HttpStatus.INTERNAL_SERVER_ERROR,"Internal Server Error!" , e.getMessage());

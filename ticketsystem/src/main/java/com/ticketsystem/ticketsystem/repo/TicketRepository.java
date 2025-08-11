@@ -20,7 +20,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             "AND (:status IS NULL OR status = :status)", nativeQuery = true)
     List<Ticket> findAllByFilters(@Param("priority") String priority, @Param("status") String status);
 
-    @Query(value = "SELECT * FROM ticket" +
+    @Query(value = "SELECT * FROM ticket " +
             "ORDER BY  CASE priority " +
             "WHEN 'URGENT' THEN 1" +
             "WHEN 'IMPORTANT' THEN 2" +
