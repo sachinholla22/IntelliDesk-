@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
+import com.ticketsystem.ticketsystem.dto.UserDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
 import com.ticketsystem.ticketsystem.repo.TicketRepository;
@@ -34,7 +35,17 @@ public class TicketServiceImpl implements TicketService {
     public String createTicketService(Ticket ticket, List<MultipartFile> photos, String userId) {
         Users user = userRepo.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new UsernameNotFoundException("No particular User"));
-        ticket.setClient(user);
+         
+        UserDTO userDto=new UserDTO();
+        userDto.setId(user.getId());
+        userDto.setName(user.getName());
+        userDto.setEmail(user.getEmail());
+        userDto.setOrganizationName(user.getOrganization().getOrgName());
+        userDto.setCreatedAt(user.getCreatedAt());
+        userDto.setRole(user.getRole());
+
+
+        ticket.setClient(userDto);
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setOrganization(user.getOrganization());
 
