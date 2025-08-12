@@ -3,6 +3,7 @@ package com.ticketsystem.ticketsystem.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ticketsystem.ticketsystem.dto.UserDTO;
 import com.ticketsystem.ticketsystem.enums.Priority;
 import com.ticketsystem.ticketsystem.enums.TicketStatus;
 
@@ -46,7 +47,7 @@ public class Ticket {
     private Priority priority;
     
     @ManyToOne
-    private Users client;
+    private UserDTO client;
 
     @ManyToOne
     private Users assignedTo;
