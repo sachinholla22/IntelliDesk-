@@ -47,7 +47,7 @@ public class Ticket {
     private Priority priority;
     
     @ManyToOne
-    private UserDTO client;
+    private Users client;
 
     @ManyToOne
     private Users assignedTo;

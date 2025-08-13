@@ -22,6 +22,7 @@ public class OrganizationService {
     private final OrganizationRepo orgRepo;
     private final UserRepo userRepo;
     private final PasswordEncoder encoder;
+
     public OrganizationService(OrganizationRepo orgRepo, UserRepo userRepo, PasswordEncoder encoder){
         this.orgRepo=orgRepo;
         this.userRepo=userRepo;
@@ -51,6 +52,4 @@ public class OrganizationService {
         response.setName(request.getOrgName());
        return response;
     }
-
-
 }

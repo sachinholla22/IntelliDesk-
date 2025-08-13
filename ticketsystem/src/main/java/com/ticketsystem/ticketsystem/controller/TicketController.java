@@ -103,7 +103,7 @@ public class TicketController {
             throw new IllegalArgumentException("InValid User or Organization");
         }
 
-        Optional<List<Users>> getDevelopers=userService.getDevelopersService(role);
+        Optional<List<Users>> getDevelopers=userService.getDevelopersService(role,orgId);
         if(getDevelopers.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiWrapper.error(HttpStatus.NOT_FOUND,"No Such Developers","NOT FOUND"));
         }

@@ -19,8 +19,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Optional<List<Users>> getDevelopersService(String role){
-        Optional<List<Users>> getUsers=userRepo.findByRole(Role.valueOf(role));
+    public Optional<List<Users>> getDevelopersService(String role,Long orgId){
+        Optional<List<Users>> getUsers=userRepo.findByRole(role,orgId);
         return getUsers;
     }
 
