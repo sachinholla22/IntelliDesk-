@@ -45,7 +45,7 @@ public class TicketServiceImpl implements TicketService {
         userDto.setRole(user.getRole());
 
 
-        ticket.setClient(userDto);
+        ticket.setClient(user);
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setOrganization(user.getOrganization());
 

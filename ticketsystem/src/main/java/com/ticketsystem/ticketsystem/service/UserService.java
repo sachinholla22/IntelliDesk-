@@ -6,5 +6,5 @@ import java.util.Optional;
 import com.ticketsystem.ticketsystem.entity.Users;
 
 public interface UserService {
-    Optional<List<Users>> getDevelopersService(String role);
+    Optional<List<Users>> getDevelopersService(String role,Long orgId);
 }
