@@ -11,10 +11,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ticketsystem.ticketsystem.dto.SingleTicketResponse;
+import com.ticketsystem.ticketsystem.dto.SingleTicketResponse;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.dto.UserDTO;
+import com.ticketsystem.ticketsystem.entity.Comments;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
+import com.ticketsystem.ticketsystem.exception.ResourceNotFoundException;
+import com.ticketsystem.ticketsystem.repo.CommentRepo;
 import com.ticketsystem.ticketsystem.repo.TicketRepository;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 
@@ -24,11 +29,13 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepo;
     private final UserRepo userRepo;
     private final FileStorageService fileStore;
+    private final CommentRepo commentRepo;
 
-    public TicketServiceImpl(TicketRepository ticketRepo, UserRepo userRepo, FileStorageService fileStore) {
+    public TicketServiceImpl(TicketRepository ticketRepo, UserRepo userRepo, FileStorageService fileStore,CommentRepo commentRepo) {
         this.ticketRepo = ticketRepo;
         this.userRepo = userRepo;
         this.fileStore = fileStore;
+        this.commentRepo=commentRepo;
     }
 
     @Override
@@ -63,15 +70,14 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public Optional<List<TicketResponseDTO>> getNullOpenTicketService(String status) {
-        Optional<List<Ticket>> optionalTickets = ticketRepo.getTicketByAssignToAndStatus(status);
 
+        Optional<List<Ticket>> optionalTickets = ticketRepo.getTicketByAssignToAndStatus(status);
         if (optionalTickets.isEmpty()) {
             return Optional.of(Collections.emptyList());
         }
 
         List<Ticket> tickets = optionalTickets.get();
-        List<TicketResponseDTO> responseList = new ArrayList<>();
-
+        List<TicketResponseDTO> responseList = new ArrayList<>();      
         for (Ticket ticket : tickets) {
             TicketResponseDTO resp = new TicketResponseDTO();
 
@@ -176,6 +182,36 @@ public class TicketServiceImpl implements TicketService {
                 ticket.getPhotoPath(),
                 ticket.getAssignedBy())).toList();
 
+    }
+
+
+    @Override
+    public Optional<SingleTicketResponse> getTicketByIds(Long ticketId){
+        Ticket getTicket=ticketRepo.findById(ticketId).orElseThrow(()->new ResourceNotFoundException("No such Tickets"));
+
+        List<String> commentTexts = commentRepo.findByTicketId(ticketId)
+        .orElse(Collections.emptyList())
+        .stream()
+        .map(Comments::getComment)
+        .toList();
+        String assignedToName = getTicket.getAssignedTo() != null ? getTicket.getAssignedTo().getName() : null;
+        String assignedByName = getTicket.getAssignedBy() != null ? getTicket.getAssignedBy().getName() : null;
+
+        SingleTicketResponse response=new SingleTicketResponse(
+            getTicket.getTitle(),
+            getTicket.getDescription(),
+            getTicket.getStatus(),
+            getTicket.getPriority(),
+            getTicket.getClient().getName(),
+            assignedToName,
+            getTicket.getCreatedAt(),
+            getTicket.getDueDate(),
+            getTicket.getPhotoPath(),
+            assignedByName,
+            commentTexts
+            
+        );
+        return Optional.of(response);
     }
 
 }

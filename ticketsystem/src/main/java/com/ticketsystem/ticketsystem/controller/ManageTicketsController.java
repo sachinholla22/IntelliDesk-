@@ -6,11 +6,13 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
+import com.ticketsystem.ticketsystem.dto.SingleTicketResponse;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 import com.ticketsystem.ticketsystem.service.TicketService;
@@ -50,6 +52,16 @@ public class ManageTicketsController {
             @RequestParam(name = "direction", defaultValue = "asc") String direction) {
         List<TicketResponseDTO> response = ticketService.sortTicketByPriority(direction);
         return ResponseEntity.ok(ApiWrapper.success(response, HttpStatus.OK));
+    }
+
+    @GetMapping("{ticketId}")
+    public ResponseEntity<ApiWrapper<?>> getTicketByIdsController(@PathVariable("ticketId") Long ticketId){
+        Optional<SingleTicketResponse> response=ticketService.getTicketByIds(ticketId);
+        if(response.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiWrapper.error(HttpStatus.NOT_FOUND,"No such tickets","Not Found"));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ApiWrapper.success(response,HttpStatus.OK));
+        
     }
 
 }
