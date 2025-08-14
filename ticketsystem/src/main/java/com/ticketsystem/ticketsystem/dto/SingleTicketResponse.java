@@ -14,17 +14,18 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+public class SingleTicketResponse {
 
-public class TicketResponseDTO {
-    private String organizationName;
     private String title;
     private String description;
     private String status;
     private Priority priority;
     private String clientName;
-    private Users assignedToId;
+    private String assignedToName;
     private LocalDateTime createdAt;
     private LocalDateTime dueDate;
     private List<String> photoPath;
-    private Users assignedById;
+    private String  assignedByName;
+    private List<String> comments;
+
 }
