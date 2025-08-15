@@ -42,8 +42,6 @@ public class AuthService {
 
     public LoginResponse loginService(UserLoginRequest request){
         Users user=repo.findByEmail(request.getEmail()).orElseThrow(()->new UsernameNotFoundException("No Such Users"));
-        System.out.println(user.getPassword());
-        System.out.println(request.getPassword());
           if(!encoder.matches(request.getPassword(),user.getPassword())){
             throw new BadCredentialsException("Username and Password dont match");
           }

@@ -22,9 +22,9 @@ public class TicketResponseDTO {
     private String status;
     private Priority priority;
     private String clientName;
-    private Users assignedToId;
+    private String assignedToName;
     private LocalDateTime createdAt;
     private LocalDateTime dueDate;
     private List<String> photoPath;
-    private Users assignedById;
+    private String assignedByName;
 }
