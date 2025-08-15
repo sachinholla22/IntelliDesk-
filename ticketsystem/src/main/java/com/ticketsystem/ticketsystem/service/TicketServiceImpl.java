@@ -69,9 +69,9 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Optional<List<TicketResponseDTO>> getNullOpenTicketService(String status) {
+    public Optional<List<TicketResponseDTO>> getNullOpenTicketService(String status,Long orgId) {
 
-        Optional<List<Ticket>> optionalTickets = ticketRepo.getTicketByAssignToAndStatus(status);
+        Optional<List<Ticket>> optionalTickets = ticketRepo.getTicketByAssignToAndStatus(status,orgId);
         if (optionalTickets.isEmpty()) {
             return Optional.of(Collections.emptyList());
         }
@@ -98,9 +98,9 @@ public class TicketServiceImpl implements TicketService {
             }
 
             if (ticket.getAssignedTo() != null) {
-                resp.setAssignedToId(ticket.getAssignedTo());
+                resp.setAssignedToName(ticket.getAssignedTo().getName());
             } else {
-                resp.setAssignedToId(null);
+                resp.setAssignedToName(null);
             }
 
             resp.setCreatedAt(ticket.getCreatedAt());
@@ -108,7 +108,7 @@ public class TicketServiceImpl implements TicketService {
 
             // Directly set the list of photo paths
             resp.setPhotoPath(ticket.getPhotoPath() != null ? ticket.getPhotoPath() : Collections.emptyList());
-
+            resp.setAssignedByName(ticket.getAssignedBy().getName());
             responseList.add(resp);
         }
 
@@ -137,8 +137,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Optional<List<TicketResponseDTO>> getAllTickets(String priority, String status) {
-        List<Ticket> tickets = ticketRepo.findAllByFilters(priority, status);
+    public Optional<List<TicketResponseDTO>> getAllTickets(String priority, String status,Long orgId) {
+        List<Ticket> tickets = ticketRepo.findAllByFilters(priority, status,orgId);
 
         if (tickets.isEmpty()) {
             return Optional.empty();
@@ -152,19 +152,19 @@ public class TicketServiceImpl implements TicketService {
                         ticket.getStatus(),
                         ticket.getPriority(),
                         ticket.getClient().getName(),
-                        ticket.getAssignedTo(),
+                        ticket.getAssignedTo().getName(),
                         ticket.getCreatedAt(),
                         ticket.getDueDate(),
                         ticket.getPhotoPath(),
-                        ticket.getAssignedBy()))
+                        ticket.getAssignedBy().getName()))
                 .collect(Collectors.toList());
 
         return Optional.of(dtoList);
     }
 
     @Override
-    public List<TicketResponseDTO> sortTicketByPriority(String direction) {
-        List<Ticket> response = ticketRepo.sortTicketByPriority();
+    public List<TicketResponseDTO> sortTicketByPriority(String direction,Long orgId) {
+        List<Ticket> response = ticketRepo.sortTicketByPriority(orgId);
 
         if ("desc".equalsIgnoreCase(direction)) {
             Collections.reverse(response);
@@ -176,11 +176,11 @@ public class TicketServiceImpl implements TicketService {
                 ticket.getStatus(),
                 ticket.getPriority(),
                 ticket.getClient().getName(),
-                ticket.getAssignedTo(),
+                ticket.getAssignedTo().getName(),
                 ticket.getCreatedAt(),
                 ticket.getDueDate(),
                 ticket.getPhotoPath(),
-                ticket.getAssignedBy())).toList();
+                ticket.getAssignedBy().getName())).toList();
 
     }
 
@@ -192,7 +192,8 @@ public class TicketServiceImpl implements TicketService {
         List<String> commentTexts = commentRepo.findByTicketId(ticketId)
         .orElse(Collections.emptyList())
         .stream()
-        .map(Comments::getComment)
+        .map(c-> "By : "+(c.getCommentedBy().getName()!=null ? c.getCommentedBy().getName() : "Unknown" )
+                +" - "+c.getComment())
         .toList();
         String assignedToName = getTicket.getAssignedTo() != null ? getTicket.getAssignedTo().getName() : null;
         String assignedByName = getTicket.getAssignedBy() != null ? getTicket.getAssignedBy().getName() : null;
@@ -212,6 +213,27 @@ public class TicketServiceImpl implements TicketService {
             
         );
         return Optional.of(response);
+    }
+
+
+    public List<TicketResponseDTO> getOverDuesController(Long orgId){
+        List<Ticket> tickets=ticketRepo.findByDues(orgId);
+
+    List<TicketResponseDTO>response= tickets.stream().map(ticket->new TicketResponseDTO(
+        ticket.getOrganization().getOrgName(),
+        ticket.getTitle(),
+        ticket.getDescription(),
+        ticket.getStatus(),
+        ticket.getPriority(),
+        ticket.getClient().getName(),
+        ticket.getAssignedTo().getName(),
+        ticket.getCreatedAt(),
+        ticket.getDueDate(),
+        ticket.getPhotoPath(),
+        ticket.getAssignedBy().getName())).toList();
+
+        return response;
+           
     }
 
 }

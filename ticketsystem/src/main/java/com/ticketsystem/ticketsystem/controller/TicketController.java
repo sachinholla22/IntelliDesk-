@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
+import com.ticketsystem.ticketsystem.dto.SingleTicketResponse;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
@@ -66,8 +67,11 @@ public class TicketController {
     
 
     @GetMapping("/getTickets")
-    public ResponseEntity<ApiWrapper<?>> getNullOpenTicketsController(@RequestParam("status") String status){
-        Optional<List<TicketResponseDTO>> ticket=ticketService.getNullOpenTicketService(status);
+    public ResponseEntity<ApiWrapper<?>> getNullOpenTicketsController(@RequestHeader("Authorization")String authHeader,@RequestParam("status") String status){
+
+        String jwt=authHeader.replace("Bearer","");
+        Long orgId=jwtUtils.extractOrganizationId(jwt);  
+        Optional<List<TicketResponseDTO>> ticket=ticketService.getNullOpenTicketService(status,orgId);
         if(ticket.isPresent()){
             return ResponseEntity.ok(ApiWrapper.success(ticket.get(),HttpStatus.OK));
         }else{
@@ -80,6 +84,7 @@ public class TicketController {
     @PostMapping("/{ticketId}/assign")
     @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<ApiWrapper<?>> assignTicketController(@RequestHeader("Authorization")String authHeader ,@PathVariable("ticketId")Long ticketId ,@RequestBody Map<String, Object> request){
+
       String jwt=authHeader.replace("Bearer","");
       String userId=jwtUtils.extractUserId(jwt);
       Users getOrgId=userRepo.findById(Long.valueOf(userId)).orElseThrow(()->new IllegalArgumentException("No such Users"));
@@ -95,6 +100,7 @@ public class TicketController {
 
     @GetMapping("/getdevelopers")
     public ResponseEntity<ApiWrapper<?>> getDeveloperController(@RequestHeader("Authorization") String authHeader,@RequestParam("role") String role){
+
         String jwt=authHeader.replace("Bearer","");
         String userId=jwtUtils.extractUserId(jwt);
         Users getOrgId=userRepo.findById(Long.valueOf(userId)).orElseThrow(()->new UsernameNotFoundException("No such users"));
@@ -108,7 +114,19 @@ public class TicketController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiWrapper.error(HttpStatus.NOT_FOUND,"No Such Developers","NOT FOUND"));
         }
 
- return ResponseEntity.status(HttpStatus.OK).body(ApiWrapper.success(getDevelopers,HttpStatus.OK));
+       return ResponseEntity.status(HttpStatus.OK).body(ApiWrapper.success(getDevelopers,HttpStatus.OK));
 
+    }
+
+    @GetMapping("/overdues")
+    public ResponseEntity<ApiWrapper<?>> getOverDuesController(@RequestHeader("Authorization") String authHeader){
+     
+        String jwt=authHeader.replace("Bearer","");
+        Long orgId=jwtUtils.extractOrganizationId(jwt);
+
+        List<TicketResponseDTO> response=ticketService.getOverDuesController(orgId);
+
+        return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.OK));
+        
     }
 }

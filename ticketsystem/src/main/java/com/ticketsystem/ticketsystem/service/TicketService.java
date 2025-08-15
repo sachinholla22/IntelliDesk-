@@ -11,9 +11,10 @@ import com.ticketsystem.ticketsystem.entity.Ticket;
 
 public interface TicketService {
    public String createTicketService(Ticket ticket, List<MultipartFile> photos, String userId);
-   public Optional<List<TicketResponseDTO>> getNullOpenTicketService( String status);
+   public Optional<List<TicketResponseDTO>> getNullOpenTicketService( String status,Long orgId);
    public String assignTicketService(Long ticketId,Long assignedById,Long assignedToId);
-   public Optional<List<TicketResponseDTO>> getAllTickets(String priority,String status);
-   public List<TicketResponseDTO> sortTicketByPriority(String direction);
+   public Optional<List<TicketResponseDTO>> getAllTickets(String priority,String status,Long orgId);
+   public List<TicketResponseDTO> sortTicketByPriority(String direction,Long orgId);
    public Optional<SingleTicketResponse> getTicketByIds(Long ticketId);
+   public List<TicketResponseDTO> getOverDuesController(Long orgId);
 }
