@@ -21,11 +21,14 @@ public class AuthService {
     private final UserRepo repo;
     private JwtUtils jwtUtils;
     private OrganizationRepo orgRepo;
-    public AuthService(UserRepo repo,PasswordEncoder encoder,JwtUtils jwtUtils,OrganizationRepo orgRepo){
+    private EmailService emailService;
+
+    public AuthService(UserRepo repo,PasswordEncoder encoder,JwtUtils jwtUtils,OrganizationRepo orgRepo,EmailService emailService){
         this.repo=repo;
         this.encoder=encoder;
         this.jwtUtils=jwtUtils;
         this.orgRepo=orgRepo;
+        this.emailService=emailService;
 
     }
 
@@ -36,6 +39,8 @@ public class AuthService {
         request.setCreatedAt(LocalDateTime.now());
         request.setOrganization(org);
         repo.save(request);
+        emailService.sendEmail(request.getEmail(),"Registration Confirmation",
+        "Congratulations! "+request.getName()+"\n You have successfully registered for the organization "+org.getOrgName());
         return "User SuccessFully Created";
 
     }
