@@ -22,11 +22,13 @@ public class OrganizationService {
     private final OrganizationRepo orgRepo;
     private final UserRepo userRepo;
     private final PasswordEncoder encoder;
+    private final EmailService emailService;
 
-    public OrganizationService(OrganizationRepo orgRepo, UserRepo userRepo, PasswordEncoder encoder){
+    public OrganizationService(OrganizationRepo orgRepo, UserRepo userRepo, PasswordEncoder encoder,EmailService emailService){
         this.orgRepo=orgRepo;
         this.userRepo=userRepo;
         this.encoder=encoder;
+        this.emailService=emailService;
     }
 
 
@@ -50,6 +52,11 @@ public class OrganizationService {
         OrganizationResponseDTO response=new OrganizationResponseDTO();
         response.setId(request.getId());
         response.setName(request.getOrgName());
+
+        emailService.sendEmail(request.getOrgEmail(), "Confirmation of Organization at IntelliDesk", 
+        "Congratulations! You have Successfully registered under the IntelliDesk.\n "+ 
+        "and  Your organization id is: "+request.getId()+"\n And  Organization name is"+request.getOrgName());
+        
        return response;
     }
 }
