@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ticketsystem.ticketsystem.dto.SingleTicketResponse;
-import com.ticketsystem.ticketsystem.dto.SingleTicketResponse;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.dto.UserDTO;
-import com.ticketsystem.ticketsystem.entity.Comments;
+import com.ticketsystem.ticketsystem.entity.Organization;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
+import com.ticketsystem.ticketsystem.enums.OrgPlans;
 import com.ticketsystem.ticketsystem.exception.ResourceNotFoundException;
 import com.ticketsystem.ticketsystem.repo.CommentRepo;
 import com.ticketsystem.ticketsystem.repo.TicketRepository;
@@ -42,7 +42,15 @@ public class TicketServiceImpl implements TicketService {
     public String createTicketService(Ticket ticket, List<MultipartFile> photos, String userId) {
         Users user = userRepo.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new UsernameNotFoundException("No particular User"));
-         
+        
+        Organization org=new Organization();
+        OrgPlans plan=org.getOrgPlan();
+        int maxPhotos=plan==OrgPlans.BASE ? 2:7;
+
+        if(photos.size()>maxPhotos){
+         throw new RuntimeException("You can upload max of "+ maxPhotos+" per ticket as per your plan");
+        }
+
         UserDTO userDto=new UserDTO();
         userDto.setId(user.getId());
         userDto.setName(user.getName());

@@ -11,6 +11,7 @@ import com.ticketsystem.ticketsystem.dto.LoginResponse;
 import com.ticketsystem.ticketsystem.dto.UserLoginRequest;
 import com.ticketsystem.ticketsystem.entity.Organization;
 import com.ticketsystem.ticketsystem.entity.Users;
+import com.ticketsystem.ticketsystem.enums.OrgPlans;
 import com.ticketsystem.ticketsystem.repo.OrganizationRepo;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 import com.ticketsystem.ticketsystem.utils.JwtUtils;
@@ -33,7 +34,14 @@ public class AuthService {
     }
 
     public String registerUserService(String orgName,Long id,Users request){
+      int count=orgRepo.countUsersByOrganization(id);
+      
        Organization org=orgRepo.findById(id).orElseThrow(()->new UsernameNotFoundException("No Such Organization"));
+       
+       if(org.getOrgPlan()==OrgPlans.BASE && count >10){
+        throw new RuntimeException("You have reached a maximum limit of User Addition as per your Base Plan");
+       }
+
         String hashedPass=encoder.encode(request.getPassword());
         request.setPassword(hashedPass);
         request.setCreatedAt(LocalDateTime.now());
