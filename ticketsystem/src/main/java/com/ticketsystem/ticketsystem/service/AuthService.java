@@ -58,7 +58,9 @@ public class AuthService {
           if(!encoder.matches(request.getPassword(),user.getPassword())){
             throw new BadCredentialsException("Username and Password dont match");
           }
-            String jwt=jwtUtils.generateToken(String.valueOf(user.getId()), user.getRole().name(),user.getOrganization().getId());
+          Organization org = orgRepo.findById(user.getOrganization().getId()).orElseThrow();
+
+            String jwt=jwtUtils.generateToken(String.valueOf(user.getId()), user.getRole().name(),user.getOrganization().getId(),String.valueOf(org));
             LoginResponse response=new LoginResponse(user.getId(),jwt,true);
             return response;
         
