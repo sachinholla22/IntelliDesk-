@@ -18,7 +18,7 @@ public class FileStorageService {
         try{
            Files.createDirectories(uploadDir);
            String fileName=UUID.randomUUID().toString().substring(0,7)+"-"+file.getOriginalFilename();
-           Path filePath=Paths.get(uploadDir+fileName);
+           Path filePath = uploadDir.resolve(fileName); 
            file.transferTo(filePath.toFile());
            return "/uploads/"+fileName;
         }catch(IOException e){
