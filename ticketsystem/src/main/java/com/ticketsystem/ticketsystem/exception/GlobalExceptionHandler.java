@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
    return ResponseEntity.ok(error);
     }
   
+    
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<ApiError> handleInvalidRoleException(InvalidRoleException e){
+    ApiError error=new ApiError(HttpStatus.FORBIDDEN,"Invalid Role" , e.getMessage());
+    return ResponseEntity.ok(error);
+    }
 
     @ExceptionHandler(InvalidResourceException.class)
     public ResponseEntity<ApiError> handleInvalidResouceError(InvalidResourceException e){

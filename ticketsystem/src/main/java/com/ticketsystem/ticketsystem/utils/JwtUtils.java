@@ -45,6 +45,9 @@ public class JwtUtils {
         return extractAllClaims(token).get("role",String.class);
     }
 
+    public String extractOrgPLan(String token){
+        return extractAllClaims(token).get("orgPlan",String.class);
+    }
     public Long extractOrganizationId(String token){
         return extractAllClaims(token).get("orgId",Long.class);
     }
