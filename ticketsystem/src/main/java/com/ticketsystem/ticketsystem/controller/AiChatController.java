@@ -3,6 +3,7 @@ package com.ticketsystem.ticketsystem.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +34,9 @@ public class AiChatController {
 
 
     @PostMapping("/ask")
-    public ResponseEntity<ApiWrapper<?>> sendAiPromptController(@RequestHeader("Authorization")String authHeader,String prompt){
+    public ResponseEntity<ApiWrapper<?>> sendAiPromptController(@RequestHeader("Authorization")String authHeader,@RequestBody String question){
         String jwt=authHeader.replace("Bearer","");
-        String plan=jwtUtils.extractRole(jwt);
+        String plan=jwtUtils.extractOrgPLan(jwt);
         if(!plan.equalsIgnoreCase("PREMIUM")){
             throw new InvalidRoleException("Please purchase the plan PREMIUM to access");
         }
@@ -44,7 +45,7 @@ public class AiChatController {
         Long orgId=jwtUtils.extractOrganizationId(jwt);
         String userId=jwtUtils.extractUserId(jwt);
 
-        AiResponse response=aiService.sendAiPrompt(prompt, orgId, Long.valueOf(userId), userRole);
+        AiResponse response=aiService.sendAiPrompt(question, orgId, Long.valueOf(userId), userRole);
         return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.OK));
     }
 

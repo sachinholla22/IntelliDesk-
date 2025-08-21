@@ -60,7 +60,7 @@ public class AuthService {
           }
           Organization org = orgRepo.findById(user.getOrganization().getId()).orElseThrow();
 
-            String jwt=jwtUtils.generateToken(String.valueOf(user.getId()), user.getRole().name(),user.getOrganization().getId(),String.valueOf(org));
+            String jwt=jwtUtils.generateToken(String.valueOf(user.getId()), user.getRole().name(),user.getOrganization().getId(),String.valueOf(org.getOrgPlan()));
             LoginResponse response=new LoginResponse(user.getId(),jwt,true);
             return response;
         
