@@ -1,12 +1,15 @@
 package com.ticketsystem.ticketsystem.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class AiResponse {
-    private String response;
+    private String answer;
+    private List<String> sources;
+
+    // getters & setters
+    public String getAnswer() { return answer; }
+    public void setAnswer(String answer) { this.answer = answer; }
+
+    public List<String> getSources() { return sources; }
+    public void setSources(List<String> sources) { this.sources = sources; }
 }
