@@ -5,12 +5,15 @@ import { Upload, X, Calendar, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
 import api, { handleApiResponse } from '../../utils/api';
-import { CreateTicketRequest, Priority } from '../../types';
+import { Priority } from '../../types';
 import { PRIORITY_OPTIONS } from '../../utils/constants';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-interface CreateTicketFormData extends CreateTicketRequest {
-  photos: FileList;
+interface CreateTicketFormData {
+  title: string;
+  description: string;
+  priority: Priority;
+  dueDate?: string;
 }
 
 const CreateTicket: React.FC = () => {
@@ -49,27 +52,25 @@ const CreateTicket: React.FC = () => {
       
       const formData = new FormData();
       
-      // Add ticket data as JSON
+      // Create ticket object matching backend expectations
       const ticketData = {
         title: data.title,
         description: data.description,
         priority: data.priority,
-        status: 'OPEN',
-        dueDate: data.dueDate,
+        status: 'OPEN', // Default status
+        ...(data.dueDate && { dueDate: data.dueDate }),
       };
       
+      // Add ticket data as JSON string with key "ticket"
       formData.append('ticket', JSON.stringify(ticketData));
       
-      // Add photos
+      // Add each photo with key "photo" (backend expects this key)
       selectedFiles.forEach((file) => {
         formData.append('photo', file);
       });
 
-      const response = await api.post('/ticket/createticket', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // Don't set Content-Type header - let browser set it with boundary
+      const response = await api.post('/ticket/createticket', formData);
       
       handleApiResponse(response);
       toast.success('Ticket created successfully!');
