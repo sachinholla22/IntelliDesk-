@@ -33,7 +33,7 @@ const UserRegister: React.FC = () => {
       const { orgName, orgId, ...userData } = data;
       
       const response = await api.post(
-        `/api/auth/register?orgname=${orgName}&orgid=${orgId}`,
+        `/auth/register?orgname=${orgName}&orgid=${orgId}`,
         userData
       );
       

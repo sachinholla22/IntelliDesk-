@@ -23,10 +23,10 @@ const Login: React.FC = () => {
   const onSubmit = async (data: LoginRequest) => {
     try {
       setLoading(true);
-      const response = await api.post('/api/auth/login', data);
+      const response = await api.post('/auth/login', data);
       const loginData = handleApiResponse<LoginResponse>(response);
 
-      if (loginData.isCorrectCredentials) {
+      if (loginData.correctCredentials) {
         // Create user object (you might want to fetch this from another endpoint)
         const userData: User = {
           id: loginData.userId,
