@@ -62,23 +62,22 @@ const CreateTicket: React.FC = () => {
       };
       
       // Add ticket data as JSON string with key "ticket"
-      formData.append('ticket', JSON.stringify(ticketData));
-      
-      // Add each photo with key "photo" (backend expects this key)
-      selectedFiles.forEach((file) => {
-        formData.append('photo', file);
-      });
-
+      const ticketBlob = new Blob([JSON.stringify(ticketData)], { 
+      type: 'application/json' 
+    });
+    formData.append('ticket', ticketBlob);
+    
+    // Add photos
+    selectedFiles.forEach((file) => {
+      formData.append('photo', file);
+    });
       // Don't set Content-Type header - let browser set it with boundary
-      const response = await api.post('/ticket/createticket', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await api.post('/ticket/createticket', formData);
+      console.log("response",response.data);
       
       handleApiResponse(response);
       toast.success('Ticket created successfully!');
-      navigate('/tickets');
+      // navigate('/tickets');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create ticket');
     } finally {

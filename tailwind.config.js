@@ -31,7 +31,18 @@ export default {
           700: '#374151',
           800: '#1f2937',
           900: '#111827',
-        }
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+ 
+        destructive: "hsl(var(--destructive))",
+        muted: "hsl(var(--muted))",
+        accent: "hsl(var(--accent))",
+        popover: "hsl(var(--popover))",
+        card: "hsl(var(--card))",
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
