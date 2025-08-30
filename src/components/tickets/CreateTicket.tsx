@@ -70,7 +70,11 @@ const CreateTicket: React.FC = () => {
       });
 
       // Don't set Content-Type header - let browser set it with boundary
-      const response = await api.post('/ticket/createticket', formData);
+      const response = await api.post('/ticket/createticket', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       
       handleApiResponse(response);
       toast.success('Ticket created successfully!');
