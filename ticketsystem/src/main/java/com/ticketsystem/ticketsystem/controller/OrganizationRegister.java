@@ -33,7 +33,7 @@ public class OrganizationRegister {
         
         OrganizationResponseDTO response=orgService.organizationResgisterService(request);
         if(request.getOrgPlan().equals(OrgPlans.PREMIUM)){
-          billingService.processPayment(response.getId());
+        //   billingService.processPayment(response.getId());
         }
         return ResponseEntity.ok(ApiWrapper.success(response,HttpStatus.CREATED));
     }

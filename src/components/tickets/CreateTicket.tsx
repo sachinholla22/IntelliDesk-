@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Upload, X, Calendar, AlertCircle } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
 import api, { handleApiResponse } from '../../utils/api';
@@ -28,7 +28,6 @@ const CreateTicket: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm<CreateTicketFormData>();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,36 +48,59 @@ const CreateTicket: React.FC = () => {
   const onSubmit = async (data: CreateTicketFormData) => {
     try {
       setLoading(true);
+      console.log('Starting ticket creation with data:', data);
       
       const formData = new FormData();
       
-      // Create ticket object matching backend expectations
+      // Create ticket object
       const ticketData = {
         title: data.title,
         description: data.description,
         priority: data.priority,
-        status: 'OPEN', // Default status
+        status: 'OPEN',
         ...(data.dueDate && { dueDate: data.dueDate }),
       };
       
-      // Add ticket data as JSON string with key "ticket"
-      const ticketBlob = new Blob([JSON.stringify(ticketData)], { 
-      type: 'application/json' 
-    });
-    formData.append('ticket', ticketBlob);
-    
-    // Add photos
-    selectedFiles.forEach((file) => {
-      formData.append('photo', file);
-    });
-      // Don't set Content-Type header - let browser set it with boundary
-      const response = await api.post('/ticket/createticket', formData);
-      console.log("response",response.data);
+      console.log('Ticket data to send:', ticketData);
       
-      handleApiResponse(response);
+      // Add ticket as JSON blob
+      const ticketBlob = new Blob([JSON.stringify(ticketData)], { 
+        type: 'application/json' 
+      });
+      formData.append('ticket', ticketBlob);
+      
+      // Add photos or empty file if no photos
+      if (selectedFiles.length > 0) {
+        selectedFiles.forEach((file) => {
+          formData.append('photo', file);
+        });
+      } else {
+        // Backend expects List<MultipartFile>, so add empty file
+        const emptyFile = new File([''], 'empty.txt', { type: 'text/plain' });
+        formData.append('photo', emptyFile);
+      }
+
+      console.log('FormData contents:');
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      // Make API call without setting Content-Type
+      const response = await api.post('/ticket/createticket', formData);
+      
+      console.log('Ticket creation response:', response);
+      const result = handleApiResponse(response);
+      console.log('Processed result:', result);
+      
       toast.success('Ticket created successfully!');
-      // navigate('/tickets');
+      navigate('/tickets');
+      
     } catch (error) {
+      console.error('Ticket creation error:', error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        console.error('Error status:', error.response.status);
+      }
       toast.error(error instanceof Error ? error.message : 'Failed to create ticket');
     } finally {
       setLoading(false);
@@ -100,7 +122,7 @@ const CreateTicket: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Title
+              Title *
             </label>
             <input
               {...register('title', { required: 'Title is required' })}
@@ -114,7 +136,7 @@ const CreateTicket: React.FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Description
+              Description *
             </label>
             <textarea
               {...register('description', { required: 'Description is required' })}
@@ -130,7 +152,7 @@ const CreateTicket: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Priority
+                Priority *
               </label>
               <select
                 {...register('priority', { required: 'Priority is required' })}

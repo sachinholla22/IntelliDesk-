@@ -16,6 +16,8 @@ import com.ticketsystem.ticketsystem.repo.OrganizationRepo;
 import com.ticketsystem.ticketsystem.repo.UserRepo;
 import com.ticketsystem.ticketsystem.utils.JwtUtils;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class AuthService {
     private PasswordEncoder encoder;
@@ -33,6 +35,7 @@ public class AuthService {
 
     }
 
+    @Transactional
     public String registerUserService(String orgName,Long id,Users request){
       int count=orgRepo.countUsersByOrganization(id);
       

@@ -15,10 +15,10 @@ public class UserLoginRequest {
 
     @NotBlank(message="Email Shouln't be blank")
     @Email(message="Please maintain correct email format")
-    public String email;
+    private String email;
 
     @NotBlank(message="Password shouldn't be empty")
-    public String password;
+    private String password;
 
     private LocalDateTime loggedTime;
 }
