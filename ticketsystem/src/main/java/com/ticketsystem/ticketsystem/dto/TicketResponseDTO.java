@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class TicketResponseDTO {
+    private Long id;
     private String organizationName;
     private String title;
     private String description;

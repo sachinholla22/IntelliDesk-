@@ -152,20 +152,22 @@ public class TicketServiceImpl implements TicketService {
             return Optional.empty();
         }
 
-        List<TicketResponseDTO> dtoList = tickets.stream()
-                .map(ticket -> new TicketResponseDTO(
-                        ticket.getOrganization().getOrgName(),
-                        ticket.getTitle(),
-                        ticket.getDescription(),
-                        ticket.getStatus(),
-                        ticket.getPriority(),
-                        ticket.getClient().getName(),
-                        ticket.getAssignedTo().getName(),
-                        ticket.getCreatedAt(),
-                        ticket.getDueDate(),
-                        ticket.getPhotoPath(),
-                        ticket.getAssignedBy().getName()))
-                .collect(Collectors.toList());
+      List<TicketResponseDTO> dtoList = tickets.stream()
+    .map(ticket -> new TicketResponseDTO(
+            ticket.getId(),
+            ticket.getOrganization().getOrgName(),
+            ticket.getTitle(),
+            ticket.getDescription(),
+            ticket.getStatus(),
+            ticket.getPriority(),
+            ticket.getClient() != null ? ticket.getClient().getName() : null,
+            ticket.getAssignedTo() != null ? ticket.getAssignedTo().getName() : null,
+            ticket.getCreatedAt(),
+            ticket.getDueDate(),
+            ticket.getPhotoPath(),
+            ticket.getAssignedBy() != null ? ticket.getAssignedBy().getName() : null
+    ))
+    .collect(Collectors.toList());
 
         return Optional.of(dtoList);
     }
@@ -178,6 +180,7 @@ public class TicketServiceImpl implements TicketService {
             Collections.reverse(response);
         }
         return response.stream().map(ticket -> new TicketResponseDTO(
+                ticket.getId(),
                 ticket.getOrganization().getOrgName(),
                 ticket.getTitle(),
                 ticket.getDescription(),
@@ -207,6 +210,7 @@ public class TicketServiceImpl implements TicketService {
         String assignedByName = getTicket.getAssignedBy() != null ? getTicket.getAssignedBy().getName() : null;
 
         SingleTicketResponse response=new SingleTicketResponse(
+            getTicket.getId(),
             getTicket.getTitle(),
             getTicket.getDescription(),
             getTicket.getStatus(),
@@ -226,8 +230,12 @@ public class TicketServiceImpl implements TicketService {
 
     public List<TicketResponseDTO> getOverDuesController(Long orgId){
         List<Ticket> tickets=ticketRepo.findByDues(orgId);
+         if (tickets == null) {
+        return Collections.emptyList();
+    }
 
     List<TicketResponseDTO>response= tickets.stream().map(ticket->new TicketResponseDTO(
+        ticket.getId(),
         ticket.getOrganization().getOrgName(),
         ticket.getTitle(),
         ticket.getDescription(),

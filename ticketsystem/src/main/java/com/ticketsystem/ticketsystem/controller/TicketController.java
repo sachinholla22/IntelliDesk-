@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ticketsystem.ticketsystem.dto.ApiWrapper;
-import com.ticketsystem.ticketsystem.dto.SingleTicketResponse;
 import com.ticketsystem.ticketsystem.dto.TicketResponseDTO;
 import com.ticketsystem.ticketsystem.entity.Ticket;
 import com.ticketsystem.ticketsystem.entity.Users;
@@ -80,6 +79,7 @@ public class TicketController {
 
     }
 
+  
 
     @PostMapping("/{ticketId}/assign")
     @PreAuthorize("hasRole('MANAGER')")
