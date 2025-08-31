@@ -29,9 +29,10 @@ const OrganizationRegister: React.FC = () => {
     watch,
     formState: { errors },
     trigger,
+    setValue
   } = useForm<OrganizationFormData>({
     defaultValues: {
-      orgPlan: 'BASE',
+      orgPlan: '',
     },
   });
 
@@ -240,21 +241,21 @@ const OrganizationRegister: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {ORG_PLAN_OPTIONS.map((plan) => (
                     <div
-                      key={plan.value}
-                      className={`relative rounded-lg border-2 p-6 cursor-pointer transition-all duration-200 ${
-                        selectedPlan === plan.value
-                          ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                      }`}
-                      onClick={() => register('orgPlan').onChange({ target: { value: plan.value } })}
-                    >
-                      <input
-                        {...register('orgPlan')}
-                        type="radio"
-                        value={plan.value}
-                        className="sr-only"
-                      />
-                      
+                       key={plan.value}
+  className={`relative rounded-lg border-2 p-6 cursor-pointer transition-all duration-200 ${
+    selectedPlan === plan.value
+      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+  }`}
+  onClick={() => setValue('orgPlan', plan.value, { shouldValidate: true })} // ✅ proper way
+>  <input
+    {...register('orgPlan', { required: 'Please select a plan' })}
+    type="radio"
+    value={plan.value}
+    checked={selectedPlan === plan.value}
+    className="sr-only"
+    readOnly
+  />
                       {selectedPlan === plan.value && (
                         <div className="absolute top-4 right-4">
                           <div className="w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center">

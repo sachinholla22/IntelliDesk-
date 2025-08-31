@@ -1,19 +1,19 @@
 import { Priority, Status, Role, OrgPlan } from '../types';
 
-export const PRIORITY_OPTIONS: { value: Priority; label: string; color: string }[] = [
-  { value: 'URGENT', label: 'Urgent', color: 'red' },
-  { value: 'IMPORTANT', label: 'Important', color: 'orange' },
-  { value: 'MEDIUM', label: 'Medium', color: 'yellow' },
-  { value: 'LOW', label: 'Low', color: 'green' },
+export const PRIORITY_OPTIONS: { value: Priority; label: string; className: string }[] = [
+  { value: 'URGENT', label: 'Urgent', className: 'bg-red-100 text-red-800'},
+  { value: 'IMPORTANT', label: 'Important', className: 'bg-orange-100 text-orange-800' },
+  { value: 'MEDIUM', label: 'Medium', className: 'bg-yellow-100 text-yellow-800' },
+  { value: 'LOW', label: 'Low', className: 'bg-green-100 text-green-800' },
 ];
 
-export const STATUS_OPTIONS: { value: Status; label: string; color: string }[] = [
-  { value: 'OPEN', label: 'Open', color: 'blue' },
-  { value: 'ASSIGNED', label: 'Assigned', color: 'purple' },
-  { value: 'INPROGRESS', label: 'In Progress', color: 'indigo' },
-  { value: 'RESOLVED', label: 'Resolved', color: 'green' },
-  { value: 'REOPENED', label: 'Reopened', color: 'orange' },
-  { value: 'CLOSED', label: 'Closed', color: 'gray' },
+export const STATUS_OPTIONS: { value: Status; label: string; className: string }[] = [
+  { value: 'OPEN', label: 'Open', className: 'bg-blue-100 text-blue-800' },
+  { value: 'ASSIGNED', label: 'Assigned', className: 'bg-purple-100 text-purple-800' },
+  { value: 'INPROGRESS', label: 'In Progress',className: 'bg-indigo-100 text-indigo-800' },
+  { value: 'RESOLVED', label: 'Resolved',className: 'bg-green-100 text-green-800' },
+  { value: 'REOPENED', label: 'Reopened', className: 'bg-orange-100 text-orange-800' },
+  { value: 'CLOSED', label: 'Closed', className: 'bg-gray-100 text-gray-800' },
 ];
 
 export const ROLE_OPTIONS: { value: Role; label: string }[] = [
@@ -64,10 +64,10 @@ export const INDUSTRY_OPTIONS = [
 
 export const getPriorityColor = (priority: Priority): string => {
   const option = PRIORITY_OPTIONS.find(p => p.value === priority);
-  return option?.color || 'gray';
+  return option?.className || 'bg-gray-100 text-gray-800';
 };
 
 export const getStatusColor = (status: Status): string => {
   const option = STATUS_OPTIONS.find(s => s.value === status);
-  return option?.color || 'gray';
+  return option?.className || 'bg-gray-100 text-gray-800';
 };

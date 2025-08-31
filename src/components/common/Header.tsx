@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../context/ThemeContext';
 
 const Header: React.FC = () => {
-  const { user, logout, orgPlan } = useAuth();
+  const { user,role, logout, orgPlan } = useAuth();
   const { isDark, toggleTheme } = useTheme();
 
   return (
@@ -44,7 +44,7 @@ const Header: React.FC = () => {
                     {user?.name}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {user?.role}
+                    {role}
                   </p>
                 </div>
               </div>

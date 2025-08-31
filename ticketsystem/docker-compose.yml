@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  ticketsystem:
+    build: .
+    container_name: ticketsystem-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ticketsystem
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=sachinholla
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
+    volumes:
+      - ./uploads:/app/uploads  # persist file uploads
+
+  db:
+    image: postgres:15
+    container_name: ticketsystem-db
+    environment:
+      - POSTGRES_DB=ticketsystem
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sachinholla
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
