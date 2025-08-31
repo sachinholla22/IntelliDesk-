@@ -4,12 +4,8 @@ import {
   LayoutDashboard, 
   Ticket, 
   Plus, 
-  Users, 
   MessageSquare, 
-  Settings,
-  BarChart3,
-  Clock,
-  AlertTriangle
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -41,29 +37,6 @@ const Sidebar: React.FC = () => {
         icon: Plus,
         roles: ['CLIENT'],
       });
-    }
-
-    if (role === 'MANAGER' || role === 'ADMIN') {
-      roleSpecificItems.push(
-        {
-          name: 'Team Management',
-          href: '/team',
-          icon: Users,
-          roles: ['MANAGER', 'ADMIN'],
-        },
-        {
-          name: 'Analytics',
-          href: '/analytics',
-          icon: BarChart3,
-          roles: ['MANAGER', 'ADMIN'],
-        },
-        {
-          name: 'Overdue Tickets',
-          href: '/tickets/overdue',
-          icon: AlertTriangle,
-          roles: ['MANAGER', 'ADMIN'],
-        }
-      );
     }
 
     if (isPremium) {

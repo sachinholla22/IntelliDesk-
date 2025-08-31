@@ -186,7 +186,7 @@ const TicketList: React.FC = () => {
 
       {/* Search and Filters */}
       <div className="card">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 ">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -276,7 +276,7 @@ const TicketList: React.FC = () => {
       </div>
 
       {/* Debug Info Panel */}
-      <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+      {/* <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
         <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Debug Info:</h4>
         <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
           <p>✅ Component Rendered</p>
@@ -288,7 +288,7 @@ const TicketList: React.FC = () => {
           <p>User Name: {user?.name}</p>
           <p>Authenticated: {isAuthenticated.toString()}</p>
         </div>
-      </div>
+      </div> */}
 
       {/* Tickets Content */}
       {loading ? (

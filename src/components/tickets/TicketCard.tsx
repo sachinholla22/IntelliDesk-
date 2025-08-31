@@ -13,17 +13,18 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
   const statusColor = getStatusColor(ticket.status);
 
   return (
-    <Link
-      to={`/tickets/${ticket.id}`}
-      className="card hover:shadow-lg transition-all duration-200 group"
-    >
+   <Link
+  to={`/tickets/${ticket.id}`}
+  className="block bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-700 
+             rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 group"
+>
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {ticket.title}
           </h3>
           <div className="flex items-center space-x-2">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium priority-${ticket.priority.toLowerCase()}`}>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${priorityColor}`}>
               {ticket.priority}
             </span>
           </div>
@@ -34,7 +35,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
         </p>
 
         <div className="flex items-center justify-between">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium status-${ticket.status.toLowerCase()}`}>
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}`}>
             {ticket.status}
           </span>
           
@@ -48,7 +49,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
 
         <div className="space-y-2 text-xs text-gray-500 dark:text-gray-400">
           <div className="flex items-center justify-between">
-            <span>Client: {ticket.clientName}</span>
+            <span>Posted By: {ticket.clientName}</span>
             {ticket.createdAt && (
               <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
             )}
