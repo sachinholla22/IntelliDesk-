@@ -12,5 +12,5 @@ public class LoginResponse {
 
     private Long userId;
     private String jwt;
-    private boolean isCorrectCredentials;
+    private boolean correctCredentials;
 }

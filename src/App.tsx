@@ -31,7 +31,7 @@ function App() {
                 <Route path="/register/organization" element={<OrganizationRegister />} />
                 <Route path="/register/user" element={<UserRegister />} />
                 
-                {/* Protected Routes */}
+                {/* Protected Routes with Layout */}
                 <Route path="/" element={
                   <ProtectedRoute>
                     <Layout />
@@ -39,7 +39,7 @@ function App() {
                 }>
                   <Route index element={<Navigate to="/dashboard" replace />} />
                   
-                  {/* Role-based Dashboards */}
+                  {/* Role-based Dashboards - Keep separate as you intended */}
                   <Route path="dashboard" element={
                     <ProtectedRoute allowedRoles={['ADMIN']}>
                       <AdminDashboard />
@@ -61,7 +61,7 @@ function App() {
                     </ProtectedRoute>
                   } />
                   
-                  {/* Ticket Routes */}
+                  {/* Ticket Routes - Remove unnecessary ProtectedRoute wrapping */}
                   <Route path="tickets" element={<TicketList />} />
                   <Route path="tickets/:id" element={<TicketDetail />} />
                   <Route path="tickets/create" element={

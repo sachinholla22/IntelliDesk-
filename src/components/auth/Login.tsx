@@ -36,7 +36,8 @@ const Login: React.FC = () => {
           organizationName: '',
           createdAt: new Date().toISOString(),
         };
-
+        localStorage.setItem("token", loginData.jwt);
+      localStorage.setItem("user", JSON.stringify(userData));
         login(loginData.jwt, userData);
         toast.success('Login successful!');
         navigate('/dashboard');

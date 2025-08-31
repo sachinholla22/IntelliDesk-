@@ -1,40 +1,87 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Filter, SortAsc, SortDesc, Plus } from 'lucide-react';
+import { Search, Filter, SortAsc, SortDesc, Plus, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { useTickets } from '../../context/TicketContext';
 import api, { handleApiResponse } from '../../utils/api';
 import { Ticket, Priority, Status } from '../../types';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '../../utils/constants';
 import TicketCard from './TicketCard';
 import LoadingSpinner from '../common/LoadingSpinner';
+import toast from 'react-hot-toast';
 
 const TicketList: React.FC = () => {
-  const { role } = useAuth();
-  const { tickets, setTickets, filters, setFilters, loading, setLoading } = useTickets();
+  const { role, user, isAuthenticated } = useAuth();
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<{
+    priority?: Priority;
+    status?: Status;
+  }>({});
 
+  // Debug authentication
   useEffect(() => {
+    console.log('TicketList - Auth check:');
+    console.log('- Authenticated:', isAuthenticated);
+    console.log('- User:', user);
+    console.log('- Role:', role);
+    
+    if (!isAuthenticated) {
+      console.log('User not authenticated, should redirect');
+      return;
+    }
+    
+    if (!user) {
+      console.log('User object not loaded yet');
+      return;
+    }
+    
+    console.log('Starting to fetch tickets...');
     fetchTickets();
-  }, [filters]);
+  }, [isAuthenticated, user]);
 
   const fetchTickets = async () => {
     try {
+      console.log('fetchTickets called with filters:', filters);
       setLoading(true);
-      const params = new URLSearchParams();
+      setError(null);
       
+      const params = new URLSearchParams();
       if (filters.priority) params.append('priority', filters.priority);
       if (filters.status) params.append('status', filters.status);
 
-      const response = await api.get(`/ticket/getalltickets?${params.toString()}`);
-      const ticketData = handleApiResponse<Ticket[]>(response);
+      const url = `/ticket/getalltickets?${params.toString()}`;
+      console.log('Making API call to:', url);
       
-      setTickets(Array.isArray(ticketData) ? ticketData : []);
+      const response = await api.get(url);
+      console.log('Raw response:', response);
+      
+      const ticketData = handleApiResponse<Ticket[]>(response);
+      console.log('Processed ticket data:', ticketData);
+      
+      // Handle different response formats
+      let ticketsArray: Ticket[] = [];
+      if (Array.isArray(ticketData)) {
+        ticketsArray = ticketData;
+      } else if (ticketData && typeof ticketData === 'object' && 'data' in ticketData) {
+        ticketsArray = Array.isArray(ticketData.data) ? ticketData.data : [];
+      } else {
+        console.warn('Unexpected ticket data format:', ticketData);
+        ticketsArray = [];
+      }
+      
+      console.log('Final tickets array:', ticketsArray);
+      setTickets(ticketsArray);
+      
     } catch (error) {
       console.error('Failed to fetch tickets:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load tickets';
+      setError(errorMessage);
       setTickets([]);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -46,21 +93,74 @@ const TicketList: React.FC = () => {
       const newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
       setSortDirection(newDirection);
       
+      console.log('Sorting tickets with direction:', newDirection);
+      
       const response = await api.get(`/ticket/getticketbysort?direction=${newDirection}`);
       const sortedTickets = handleApiResponse<Ticket[]>(response);
       
       setTickets(Array.isArray(sortedTickets) ? sortedTickets : []);
     } catch (error) {
       console.error('Failed to sort tickets:', error);
+      toast.error('Failed to sort tickets');
     } finally {
       setLoading(false);
     }
   };
 
+  // Filter tickets based on search term
   const filteredTickets = tickets.filter(ticket =>
-    ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ticket.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Don't render anything if not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Show loading while user data is being loaded
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner size="lg" />
+        <span className="ml-2">Loading user data...</span>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Tickets
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Manage and track support tickets
+            </p>
+          </div>
+        </div>
+        
+        <div className="text-center py-12">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            Error Loading Tickets
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            {error}
+          </p>
+          <button
+            onClick={fetchTickets}
+            className="btn-primary"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -175,10 +275,26 @@ const TicketList: React.FC = () => {
         )}
       </div>
 
-      {/* Tickets Grid */}
+      {/* Debug Info Panel */}
+      <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+        <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Debug Info:</h4>
+        <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+          <p>✅ Component Rendered</p>
+          <p>Loading: {loading.toString()}</p>
+          <p>Error: {error || 'None'}</p>
+          <p>Raw Tickets: {tickets.length}</p>
+          <p>Filtered: {filteredTickets.length}</p>
+          <p>User Role: {role}</p>
+          <p>User Name: {user?.name}</p>
+          <p>Authenticated: {isAuthenticated.toString()}</p>
+        </div>
+      </div>
+
+      {/* Tickets Content */}
       {loading ? (
-        <div className="flex items-center justify-center h-64">
+        <div className="flex flex-col items-center justify-center h-64 space-y-4">
           <LoadingSpinner size="lg" />
+          <span className="text-gray-600 dark:text-gray-400">Loading tickets...</span>
         </div>
       ) : filteredTickets.length === 0 ? (
         <div className="text-center py-12">
@@ -204,10 +320,21 @@ const TicketList: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredTickets.map((ticket) => (
-            <TicketCard key={ticket.id} ticket={ticket} />
-          ))}
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Showing {filteredTickets.length} ticket{filteredTickets.length !== 1 ? 's' : ''}
+          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredTickets.map((ticket, index) => {
+              console.log(`Rendering ticket ${index}:`, ticket);
+              return (
+                <TicketCard 
+                  key={ticket.id || `ticket-${index}`} 
+                  ticket={ticket} 
+                />
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
