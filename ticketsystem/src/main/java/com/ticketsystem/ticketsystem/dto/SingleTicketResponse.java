@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SingleTicketResponse {
-
+    private Long id;
     private String title;
     private String description;
     private String status;

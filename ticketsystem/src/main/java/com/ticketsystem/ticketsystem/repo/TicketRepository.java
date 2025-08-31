@@ -30,4 +30,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query(value="SELECT * FROM ticket WHERE due_date<CURRENT_DATE AND status!='RESOLVED' AND org_id = :orgId",nativeQuery=true)
     List<Ticket> findByDues(@Param("orgId") Long orgId);
+
+    Optional<Ticket> findByIdAndOrganizationId(Long id, Long orgId);
+
 }

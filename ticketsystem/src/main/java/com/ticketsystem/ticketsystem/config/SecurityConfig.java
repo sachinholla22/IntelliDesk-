@@ -38,6 +38,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/auth/login", "/auth/register", "/organization/create-organization").permitAll()
+            . requestMatchers("/uploads/**").permitAll()
             .anyRequest().authenticated()
         )
         .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
