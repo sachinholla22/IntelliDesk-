@@ -1,32 +1,57 @@
 version: "3.8"
 
 services:
-  ticketsystem:
+  # Redis Cache Service
+  redis:
+    image: redis:7.2-alpine
+    container_name: ticketsystem-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Your Backend Service
+  ticketsystem-backend:
     build: .
-    container_name: ticketsystem-app
+    container_name: ticketsystem-backend
     ports:
       - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ticketsystem
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=sachinholla
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
-      - db
-    volumes:
-      - ./uploads:/app/uploads  # persist file uploads
-
-  db:
-    image: postgres:15
-    container_name: ticketsystem-db
+      - redis
     environment:
-      - POSTGRES_DB=ticketsystem
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=sachinholla
-    ports:
-      - "5432:5432"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/ticketsystem
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: sachinholla
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JWT_SECRET: mysecretkey12345678901234567890
+      APP_MAIL_FROM: sachinholla01@gmail.com
+      APP_FILE_BASE_URL: http://localhost:8080
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: sachinholla01@gmail.com
+      SPRING_MAIL_PASSWORD: tjuf hend fuun gole
+      SPRING_MAIL_PROTOCOL: smtp
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 20MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 20MB
+      SPRING_WEB_RESOURCES_STATIC_LOCATIONS: file:./uploads/
+      # Redis Configuration
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_CACHE_TYPE: redis
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./uploads:/app/uploads
+    restart: unless-stopped
 
+# Define volumes
 volumes:
-  postgres_data:
+  redis_data:
+    driver: local

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,7 @@ public class TicketController {
         this.userRepo=userRepo;
     }
 
+    @CacheEvict(value = "allTickets", allEntries = true)
     @PreAuthorize("hasRole('CLIENT')")
     @PostMapping(value="/createticket",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiWrapper<?>> createTicketController( @RequestHeader("Authorization")String authHeader,@Valid @RequestPart("ticket") Ticket ticket, @RequestPart("photo") List <MultipartFile> photos){
