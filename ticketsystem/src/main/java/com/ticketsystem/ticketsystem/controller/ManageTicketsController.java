@@ -3,6 +3,7 @@ package com.ticketsystem.ticketsystem.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ public class ManageTicketsController {
         this.userRepo = userRepo;
     }
 
+    @Cacheable(value = "allTickets", key = "'tickets'")
     @GetMapping("/getalltickets")
     public ResponseEntity<ApiWrapper<?>> getAllTickets(@RequestHeader("Authorization") String authHeader,@RequestParam(required = false) String priority,
             @RequestParam(required = false) String status) {
