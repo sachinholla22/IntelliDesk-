@@ -23,12 +23,14 @@ public class OrganizationService {
     private final UserRepo userRepo;
     private final PasswordEncoder encoder;
     private final EmailService emailService;
+    private final KafkaMessageProducer kafkaMessageProducer;
 
-    public OrganizationService(OrganizationRepo orgRepo, UserRepo userRepo, PasswordEncoder encoder,EmailService emailService){
+    public OrganizationService(OrganizationRepo orgRepo, UserRepo userRepo, PasswordEncoder encoder,EmailService emailService,KafkaMessageProducer kafkaMessageProducer){
         this.orgRepo=orgRepo;
         this.userRepo=userRepo;
         this.encoder=encoder;
         this.emailService=emailService;
+        this.kafkaMessageProducer=kafkaMessageProducer;
     }
 
 
@@ -52,7 +54,7 @@ public class OrganizationService {
         OrganizationResponseDTO response=new OrganizationResponseDTO();
         response.setId(request.getId());
         response.setName(request.getOrgName());
-
+        kafkaMessageProducer.sendMessage(request.getId());
         emailService.sendEmail(request.getOrgEmail(), "Confirmation of Organization at IntelliDesk", 
         "Congratulations! You have Successfully registered under the IntelliDesk.\n "+ 
         "and  Your organization id is: "+request.getId()+"\n And  Organization name is"+request.getOrgName());
